@@ -12,6 +12,7 @@ function [Rx_opt, w_opt, info] = sdr_solve_p1(params)
 %   fisher_builder  - function handle F = fisher_builder(Rx, epsilon)
 %
 % Optional fields:
+%   save_path       - file path string to save results as .mat (e.g. 'results/run1.mat')
 %   epsilon_samples - size Q x Ns, robust samples of epsilon
 %   epsilon_sampling - struct with fields:
 %       .mode        - 'sphere_radial' (default)
@@ -217,6 +218,14 @@ function [Rx_opt, w_opt, info] = sdr_solve_p1(params)
     end
     if fim_slack_weight > 0
         info.fim_slack = fim_slack;
+    end
+
+    if isfield(params, 'save_path') && ~isempty(params.save_path)
+        save_dir = fileparts(params.save_path);
+        if ~isempty(save_dir) && ~exist(save_dir, 'dir')
+            mkdir(save_dir);
+        end
+        save(params.save_path, 'Rx_opt', 'w_opt', 'info', 'params');
     end
 end
 
